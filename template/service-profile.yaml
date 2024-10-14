@@ -1,0 +1,14 @@
+---
+apiVersion: linkerd.io/v1alpha2
+kind: ServiceProfile
+metadata:
+  name: {{ .ServiceName }}.default.svc.cluster.local
+  namespace: default
+spec:
+  routes:
+  {{ range .Routes -}}
+  - condition:
+      method: POST
+      pathRegex: {{ .PathRegex }}
+    name: {{ .Name }}
+  {{ end }}
