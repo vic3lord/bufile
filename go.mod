@@ -1,4 +1,4 @@
-module github.com/vic3lord/probufile
+module github.com/vic3lord/bufile
 
 go 1.23.2
 

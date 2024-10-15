@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package probufile.v1;
+package bufile.v1;
 
 import "google/protobuf/descriptor.proto";
 

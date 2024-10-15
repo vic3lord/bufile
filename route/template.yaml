@@ -11,7 +11,12 @@ spec:
   # Deprecated: RPC {{ .Name }} is deprecated
   {{ end -}}
   - name: {{ .Name }}
+    {{ if .Retryable -}}
     isRetryable: {{ .Retryable }}
+    {{ end -}}
+    {{ if .Timeout -}}
+    timeout: {{ .Timeout }}
+    {{ end -}}
     condition:
       method: POST
       pathRegex: {{ .PathRegex }}

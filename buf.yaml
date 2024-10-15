@@ -2,7 +2,7 @@
 version: v2
 modules:
   - path: proto
-    name: buf.build/vic3lord/probufile
+    name: buf.build/vic3lord/bufile
 deps:
   - buf.build/bufbuild/protovalidate
 lint:
