@@ -2,13 +2,17 @@
 apiVersion: linkerd.io/v1alpha2
 kind: ServiceProfile
 metadata:
-  name: {{ .ServiceName }}.default.svc.cluster.local
-  namespace: default
+  name: {{ .Service }}.{{ .Namespace }}.svc.cluster.local
+  namespace: {{ .Namespace }}
 spec:
   routes:
   {{ range .Routes -}}
-  - condition:
+  {{ if .Deprecated -}}
+  # Deprecated: RPC {{ .Name }} is deprecated
+  {{ end -}}
+  - name: {{ .Name }}
+    isRetryable: {{ .Retryable }}
+    condition:
       method: POST
       pathRegex: {{ .PathRegex }}
-    name: {{ .Name }}
   {{ end }}
