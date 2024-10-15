@@ -35,7 +35,7 @@ type Rule struct {
 //go:embed template.yaml
 var routesTemplate string
 
-func Generate(ctx context.Context, w io.Writer) error {
+func Generate(ctx context.Context, mod string, w io.Writer) error {
 	tmpl, err := template.New("routes-template").Parse(routesTemplate)
 	if err != nil {
 		return err

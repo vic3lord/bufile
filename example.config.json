@@ -1,0 +1,5 @@
+{
+  "modules": [
+    "buf.build/vic3lord/bufile"
+  ]
+}
