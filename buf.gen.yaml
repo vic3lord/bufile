@@ -1,12 +1,9 @@
 version: v2
 managed:
   enabled: true
-  disable:
-    - file_option: go_package
-      module: buf.build/bufbuild/protovalidate
   override:
     - file_option: go_package_prefix
-      value: github.com/vic3lord/probufile/proto
+      value: github.com/vic3lord/bufile/proto
 plugins:
   - remote: buf.build/protocolbuffers/go
     out: proto

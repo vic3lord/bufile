@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package testbufile.v1;
+
+import "bufile/v1/bufile.proto";
+
+option (bufile.v1.linkerd_service) = "testbufile";
+option (bufile.v1.linkerd_namespace) = "default";
+
+service GreetingService {
+  rpc Say(SayRequest) returns (SayResponse) {
+    option idempotency_level = IDEMPOTENT;
+    option (bufile.v1.linkerd_timeout) = "30s";
+  }
+}
+
+message SayRequest {
+  string name = 1;
+}
+
+message SayResponse {
+  string greeting = 1;
+}

@@ -41,7 +41,7 @@ func Generate(ctx context.Context, w io.Writer) error {
 		return err
 	}
 
-	res, err := authorizedRequest(ctx, "buf.build/tannin/backend")
+	res, err := authorizedRequest(ctx, "buf.build/vic3lord/bufile")
 	if err != nil {
 		return err
 	}
@@ -99,8 +99,7 @@ func authorizedRequest(ctx context.Context, mod string) (*connect.Response[refle
 	)
 
 	msg := &reflectv1beta1.GetFileDescriptorSetRequest{
-		Module:  mod,
-		Version: "dem-6413-write-a-tool-that-syncs-buf-into-linkerd-service-profiles",
+		Module: mod,
 	}
 
 	// Add Authorization header to the request.
