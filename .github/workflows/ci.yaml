@@ -1,0 +1,17 @@
+name: ci
+on: [push]
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v4
+        with:
+          go-version: '1.23'
+
+      - name: Dagger pipeline
+        run: go run ./build
+
