@@ -58,8 +58,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	ctr := Base(dag).
-		With(Task(*task))
+	ctr, err := Base(dag).
+		With(Task(*task)).
+		Sync(ctx)
+	if err != nil {
+		slog.Error("Sync container", slog.String("err", err.Error()))
+		os.Exit(1)
+	}
 
 	if *task != "" {
 		slog.Info("[Dev mode] Image won't be published", slog.String("task", *task))

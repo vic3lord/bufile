@@ -41,7 +41,7 @@ func Generate(ctx context.Context, mod string, w io.Writer) error {
 		return err
 	}
 
-	res, err := authorizedRequest(ctx, "buf.build/vic3lord/bufile")
+	res, err := authorizedRequest(ctx, mod)
 	if err != nil {
 		return err
 	}
