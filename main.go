@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
-	"log"
+	"fmt"
+	"io"
 	"log/slog"
 	"os"
 
@@ -15,22 +17,30 @@ var (
 	configFile = flag.String("config", "bufile.json", "Path to config file")
 )
 
+func run(ctx context.Context, mods []string, w io.Writer) error {
+	var errs error
+	for _, mod := range mods {
+		err := route.Generate(ctx, mod, w)
+		if err != nil {
+			moderr := fmt.Errorf("generate routes for module %q: %w", mod, err)
+			errs = errors.Join(errs, moderr)
+		}
+	}
+	return errs
+
+}
+
 func main() {
 	flag.Parse()
 	cfg, err := config.Parse(*configFile)
 	if err != nil {
-		log.Fatalf("Failed to parse config: %v", err)
+		slog.Error("Parse config", slog.String("err", err.Error()))
+		os.Exit(1)
 	}
 
 	ctx := context.Background()
-	for _, mod := range cfg.Modules {
-		err = route.Generate(ctx, mod, os.Stdout)
-		if err != nil {
-			l := slog.With(
-				slog.String("module", mod),
-				slog.String("err", err.Error()),
-			)
-			l.Error("failed to generate routes")
-		}
+	if err := run(ctx, cfg.Modules, os.Stdout); err != nil {
+		slog.Error("Generate routes", slog.String("err", err.Error()))
+		os.Exit(1)
 	}
 }
