@@ -2,11 +2,15 @@ package main
 
 import (
 	"context"
+	"os"
 	"strings"
 	"testing"
 )
 
 func TestRunMain(t *testing.T) {
+	if os.Getenv("BUF_TOKEN") == "" {
+		t.Skip("skipping test; BUF_TOKEN not set")
+	}
 	var tests = []struct {
 		name  string
 		given []string

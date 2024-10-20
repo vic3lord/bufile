@@ -46,7 +46,9 @@ func Base(dag *dagger.Client) *dagger.Container {
 	return dag.Container().
 		From("golang:1.23").
 		WithMountedDirectory("/src", dag.Host().Directory(".")).
-		WithWorkdir("/src")
+		WithWorkdir("/src").
+		WithMountedCache("/root/.cache/go-build", dag.CacheVolume("/root/.cache/go-build")).
+		WithMountedCache("/go/pkg/mod", dag.CacheVolume("/go/pkg/mod"))
 }
 
 func main() {
