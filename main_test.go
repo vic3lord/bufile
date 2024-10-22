@@ -5,6 +5,8 @@ import (
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/vic3lord/bufile/route"
 )
 
 func TestRunMain(t *testing.T) {
@@ -13,15 +15,16 @@ func TestRunMain(t *testing.T) {
 	}
 	var tests = []struct {
 		name  string
-		given []string
+		given route.Module
 	}{
-		{"correct mod", []string{"buf.build/vic3lord/bufile"}},
+		{"correct mod", route.Module{URL: "buf.build/vic3lord/bufile"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
 			var buf strings.Builder
-			err := run(ctx, tt.given, &buf)
+			given := []route.Module{tt.given}
+			err := run(ctx, given, &buf)
 			if err != nil {
 				t.Errorf("expected nil, actual %v", err)
 			}

@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+
+	"github.com/vic3lord/bufile/route"
 )
 
 type Config struct {
-	Modules []string `json:"modules"`
+	Modules []route.Module `json:"modules"`
 }
 
 func Parse(path string) (Config, error) {

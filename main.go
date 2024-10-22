@@ -17,7 +17,7 @@ var (
 	configFile = flag.String("config", "bufile.json", "Path to config file")
 )
 
-func run(ctx context.Context, mods []string, w io.Writer) error {
+func run(ctx context.Context, mods []route.Module, w io.Writer) error {
 	var errs error
 	for _, mod := range mods {
 		err := route.Generate(ctx, mod, w)

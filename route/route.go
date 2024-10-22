@@ -1,6 +1,7 @@
 package route
 
 import (
+	"cmp"
 	"context"
 	"fmt"
 	"io"
@@ -11,11 +12,18 @@ import (
 	reflectv1beta1connect "buf.build/gen/go/bufbuild/reflect/connectrpc/go/buf/reflect/v1beta1/reflectv1beta1connect"
 	reflectv1beta1 "buf.build/gen/go/bufbuild/reflect/protocolbuffers/go/buf/reflect/v1beta1"
 	"connectrpc.com/connect"
-	"github.com/vic3lord/bufile/proto/bufile/v1"
+	bufilev1 "github.com/vic3lord/bufile/proto/bufile/v1"
 	"google.golang.org/protobuf/types/descriptorpb"
 
 	_ "embed"
 )
+
+type Module struct {
+	Name      string `json:"name"`
+	Namespace string `json:"namespace"`
+	URL       string `json:"url"`
+	Version   string `json:"version"`
+}
 
 type ServiceProfile struct {
 	Service   string
@@ -35,7 +43,7 @@ type Rule struct {
 //go:embed template.yaml
 var routesTemplate string
 
-func Generate(ctx context.Context, mod string, w io.Writer) error {
+func Generate(ctx context.Context, mod Module, w io.Writer) error {
 	tmpl, err := template.New("routes-template").Parse(routesTemplate)
 	if err != nil {
 		return err
@@ -46,23 +54,11 @@ func Generate(ctx context.Context, mod string, w io.Writer) error {
 		return err
 	}
 
-	svc := ServiceProfile{Namespace: "default"}
+	svc := ServiceProfile{
+		Service:   mod.Name,
+		Namespace: cmp.Or(mod.Namespace, "default"),
+	}
 	for _, file := range res.Msg.GetFileDescriptorSet().GetFile() {
-		fileOpts := file.GetOptions()
-		if fileOpts == nil {
-			continue
-		}
-
-		service := fileOpts.ProtoReflect().Get(bufilev1.E_LinkerdService.TypeDescriptor())
-		if service.IsValid() {
-			svc.Service = service.String()
-		}
-
-		ns := fileOpts.ProtoReflect().Get(bufilev1.E_LinkerdNamespace.TypeDescriptor())
-		if ns.IsValid() {
-			svc.Namespace = ns.String()
-		}
-
 		for _, service := range file.GetService() {
 			packageAndService := fmt.Sprintf("%s.%s", file.GetPackage(), service.GetName())
 			for _, method := range service.GetMethod() {
@@ -92,14 +88,15 @@ func Generate(ctx context.Context, mod string, w io.Writer) error {
 	return tmpl.Execute(w, svc)
 }
 
-func authorizedRequest(ctx context.Context, mod string) (*connect.Response[reflectv1beta1.GetFileDescriptorSetResponse], error) {
+func authorizedRequest(ctx context.Context, mod Module) (*connect.Response[reflectv1beta1.GetFileDescriptorSetResponse], error) {
 	client := reflectv1beta1connect.NewFileDescriptorSetServiceClient(
 		http.DefaultClient,
 		"https://buf.build:443",
 	)
 
 	msg := &reflectv1beta1.GetFileDescriptorSetRequest{
-		Module: mod,
+		Module:  mod.URL,
+		Version: mod.Version,
 	}
 
 	// Add Authorization header to the request.

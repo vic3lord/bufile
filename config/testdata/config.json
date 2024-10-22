@@ -1,5 +1,9 @@
 {
   "modules": [
-    "buf.build/vic3lord/bufile"
+    {
+      "name": "bufile",
+      "namespace": "default",
+      "url": "buf.build/vic3lord/bufile"
+    }
   ]
 }
