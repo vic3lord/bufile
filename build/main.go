@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"log/slog"
 	"os"
 
@@ -56,7 +57,7 @@ func main() {
 	ctx := context.Background()
 	dag, err := dagger.Connect(ctx, dagger.WithLogOutput(os.Stdout))
 	if err != nil {
-		slog.Error("Connect dagger engine", slog.String("err", err.Error()))
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
@@ -64,7 +65,7 @@ func main() {
 		With(Task(*task)).
 		Sync(ctx)
 	if err != nil {
-		slog.Error("Sync container", slog.String("err", err.Error()))
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
@@ -75,7 +76,7 @@ func main() {
 
 	_, err = Publish(dag, ctr).Sync(ctx)
 	if err != nil {
-		slog.Error("Publish container", slog.String("err", err.Error()))
+		fmt.Println(err)
 		os.Exit(1)
 	}
 }
