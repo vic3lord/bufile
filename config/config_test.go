@@ -3,6 +3,8 @@ package config
 import (
 	"slices"
 	"testing"
+
+	"github.com/vic3lord/bufile/route"
 )
 
 func TestParse(t *testing.T) {
@@ -11,7 +13,9 @@ func TestParse(t *testing.T) {
 		t.Error(err)
 	}
 
-	ok := slices.Contains(cfg.Modules, "buf.build/vic3lord/bufile")
+	ok := slices.ContainsFunc(cfg.Modules, func(m route.Module) bool {
+		return m.URL == "buf.build/vic3lord/bufile"
+	})
 	if !ok {
 		t.Error("expected module not found")
 	}
