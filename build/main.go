@@ -53,6 +53,7 @@ func Publish(ctx context.Context, dag *dagger.Client, ctr *dagger.Container) (st
 func Base(dag *dagger.Client) *dagger.Container {
 	return dag.Container().
 		From("golang:1.23").
+		WithEnvVariable("CGO_ENABLED", "0").
 		WithMountedDirectory("/src", dag.Host().Directory(".")).
 		WithWorkdir("/src").
 		WithMountedCache("/root/.cache/go-build", dag.CacheVolume("/root/.cache/go-build")).
