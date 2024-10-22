@@ -64,7 +64,7 @@ func Generate(ctx context.Context, mod Module, w io.Writer) error {
 			for _, method := range service.GetMethod() {
 				rt := Rule{
 					Name:      method.GetName(),
-					PathRegex: fmt.Sprintf("%s/%s", packageAndService, method.GetName()),
+					PathRegex: fmt.Sprintf("/%s/%s", packageAndService, method.GetName()),
 				}
 
 				methodOpts := method.GetOptions()
