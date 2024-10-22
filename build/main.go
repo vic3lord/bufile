@@ -36,11 +36,17 @@ func Task(name string) func(ctr *dagger.Container) *dagger.Container {
 	return All
 }
 
-func Publish(dag *dagger.Client, ctr *dagger.Container) *dagger.Container {
+func Publish(ctx context.Context, dag *dagger.Client, ctr *dagger.Container) (string, error) {
+	user := os.Getenv("GITHUB_ACTOR")
+	pass := dag.SetSecret("GITHUB_TOKEN", os.Getenv("GITHUB_TOKEN"))
+	registry := "ghcr.io"
+	image := fmt.Sprintf("%s/%s", registry, os.Getenv("GITHUB_REPOSITORY"))
 	return dag.Container().
 		From("gcr.io/distroless/static").
 		WithFile("/bufile", ctr.File("/src/bufile")).
-		WithEntrypoint([]string{"/bufile"})
+		WithEntrypoint([]string{"/bufile"}).
+		WithRegistryAuth(registry, user, pass).
+		Publish(ctx, image)
 }
 
 func Base(dag *dagger.Client) *dagger.Container {
@@ -74,9 +80,10 @@ func main() {
 		return
 	}
 
-	_, err = Publish(dag, ctr).Sync(ctx)
+	ref, err := Publish(ctx, dag, ctr)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+	slog.Info("Image published", slog.String("ref", ref))
 }
