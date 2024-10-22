@@ -7,7 +7,28 @@ using [Buf Schema Registry](https://buf.build/docs/registry).
 
 Here's an example protobuf file that includes the right annotations:
 
-https://github.com/vic3lord/bufile/blob/d8f727f2d61a7a3a65064a95683f0fdb7885aadc/proto/testbufile/v1/testbufile.proto#L1-L23
+```proto
+ syntax = "proto3"; 
+  
+ package testbufile.v1; 
+  
+ import "bufile/v1/bufile.proto"; 
+  
+ service GreetingService { 
+   rpc Say(SayRequest) returns (SayResponse) { 
+     option idempotency_level = IDEMPOTENT; 
+     option (bufile.v1.linkerd_timeout) = "30s"; 
+   } 
+ } 
+  
+ message SayRequest { 
+   string name = 1; 
+ } 
+  
+ message SayResponse { 
+   string greeting = 1; 
+ }
+```
 
 ```shell
 bufile --config <path-to-bufile.json>
