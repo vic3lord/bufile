@@ -1,6 +1,7 @@
 package main
 
 import (
+	"cmp"
 	"context"
 	"flag"
 	"fmt"
@@ -37,10 +38,10 @@ func Task(name string) func(ctr *dagger.Container) *dagger.Container {
 }
 
 func Publish(ctx context.Context, dag *dagger.Client, ctr *dagger.Container) (string, error) {
-	user := os.Getenv("GITHUB_ACTOR")
+	user := cmp.Or(os.Getenv("GITHUB_ACTOR"), "github-actions")
 	pass := dag.SetSecret("GITHUB_TOKEN", os.Getenv("GITHUB_TOKEN"))
 	registry := "ghcr.io"
-	image := fmt.Sprintf("%s/%s", registry, os.Getenv("GITHUB_REPOSITORY"))
+	image := fmt.Sprintf("%s/%s", registry, cmp.Or(os.Getenv("GITHUB_REPOSITORY"), "bufile"))
 	return dag.Container().
 		From("gcr.io/distroless/static").
 		WithFile("/bufile", ctr.File("/src/bufile")).
