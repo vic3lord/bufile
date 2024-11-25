@@ -40,10 +40,14 @@ type Rule struct {
 	Timeout    string
 }
 
+type Options struct {
+	IncludeServiceName bool
+}
+
 //go:embed template.yaml
 var routesTemplate string
 
-func Generate(ctx context.Context, mod Module, w io.Writer) error {
+func Generate(ctx context.Context, mod Module, w io.Writer, opts Options) error {
 	tmpl, err := template.New("routes-template").Parse(routesTemplate)
 	if err != nil {
 		return err
@@ -67,6 +71,10 @@ func Generate(ctx context.Context, mod Module, w io.Writer) error {
 					PathRegex: fmt.Sprintf("/%s/%s", packageAndService, method.GetName()),
 				}
 
+				if opts.IncludeServiceName {
+					rt.Name = fmt.Sprintf("%s.%s", service.GetName(), method.GetName())
+				}
+
 				methodOpts := method.GetOptions()
 				if methodOpts == nil {
 					continue
@@ -88,7 +96,10 @@ func Generate(ctx context.Context, mod Module, w io.Writer) error {
 	return tmpl.Execute(w, svc)
 }
 
-func authorizedRequest(ctx context.Context, mod Module) (*connect.Response[reflectv1beta1.GetFileDescriptorSetResponse], error) {
+func authorizedRequest(
+	ctx context.Context,
+	mod Module,
+) (*connect.Response[reflectv1beta1.GetFileDescriptorSetResponse], error) {
 	client := reflectv1beta1connect.NewFileDescriptorSetServiceClient(
 		http.DefaultClient,
 		"https://buf.build:443",

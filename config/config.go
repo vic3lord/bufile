@@ -9,7 +9,8 @@ import (
 )
 
 type Config struct {
-	Modules []route.Module `json:"modules"`
+	IncludeServiceName bool           `json:"include_service_name"`
+	Modules            []route.Module `json:"modules"`
 }
 
 func Parse(path string) (Config, error) {

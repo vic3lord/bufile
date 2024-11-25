@@ -11,6 +11,10 @@ import (
 	"dagger.io/dagger"
 )
 
+const (
+	kubectlURL = "https://dl.k8s.io/release/v1.31.0/bin/linux/amd64/kubectl"
+)
+
 var task = flag.String("task", "", "task to run")
 
 func Test(ctr *dagger.Container) *dagger.Container {
@@ -45,6 +49,7 @@ func Publish(ctx context.Context, dag *dagger.Client, ctr *dagger.Container) (st
 	return dag.Container().
 		From("gcr.io/distroless/static").
 		WithFile("/bufile", ctr.File("/src/bufile")).
+		WithFile("/kubectl", dag.HTTP(kubectlURL), dagger.ContainerWithFileOpts{Permissions: 0750}).
 		WithEntrypoint([]string{"/bufile"}).
 		WithRegistryAuth(registry, user, pass).
 		Publish(ctx, image)
