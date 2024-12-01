@@ -49,7 +49,7 @@ func Publish(ctx context.Context, dag *dagger.Client, ctr *dagger.Container) (st
 	return dag.Container().
 		From("gcr.io/distroless/static").
 		WithFile("/bufile", ctr.File("/src/bufile")).
-		WithFile("/kubectl", dag.HTTP(kubectlURL), dagger.ContainerWithFileOpts{Permissions: 0750}).
+		WithFile("/usr/bin/kubectl", dag.HTTP(kubectlURL), dagger.ContainerWithFileOpts{Permissions: 0750}).
 		WithEntrypoint([]string{"/bufile"}).
 		WithRegistryAuth(registry, user, pass).
 		Publish(ctx, image)
