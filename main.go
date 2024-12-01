@@ -56,7 +56,7 @@ func main() {
 		cmd.Stdin = strings.NewReader(sb.String())
 		out, err := cmd.CombinedOutput()
 		if err != nil {
-			slog.Error("Apply routes", slog.String("err", err.Error()))
+			slog.Error("Apply routes", slog.String("output", string(out)), slog.String("err", err.Error()))
 			os.Exit(1)
 		}
 		fmt.Print(string(out))
