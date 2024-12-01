@@ -8,6 +8,8 @@ import (
 	"io"
 	"log/slog"
 	"os"
+	"os/exec"
+	"strings"
 
 	"github.com/vic3lord/bufile/config"
 	"github.com/vic3lord/bufile/route"
@@ -15,6 +17,7 @@ import (
 
 var (
 	configFile = flag.String("config", "bufile.json", "Path to config file")
+	apply      = flag.Bool("apply", false, "Apply the generated routes")
 )
 
 func run(ctx context.Context, cfg config.Config, w io.Writer) error {
@@ -41,9 +44,23 @@ func main() {
 		os.Exit(1)
 	}
 
+	var sb strings.Builder
 	ctx := context.Background()
-	if err := run(ctx, cfg, os.Stdout); err != nil {
+	if err := run(ctx, cfg, &sb); err != nil {
 		slog.Error("Generate routes", slog.String("err", err.Error()))
 		os.Exit(1)
 	}
+
+	if *apply {
+		cmd := exec.Command("kubectl", "apply", "-f", "-")
+		cmd.Stdin = strings.NewReader(sb.String())
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			slog.Error("Apply routes", slog.String("err", err.Error()))
+			os.Exit(1)
+		}
+		fmt.Print(string(out))
+		os.Exit(0)
+	}
+	fmt.Print(sb.String())
 }
