@@ -4,9 +4,9 @@ go 1.23.2
 
 require (
 	buf.build/gen/go/bufbuild/reflect/connectrpc/go v1.17.0-20240117202343-bf8f65e8876c.1
-	buf.build/gen/go/bufbuild/reflect/protocolbuffers/go v1.35.1-20240117202343-bf8f65e8876c.1
+	buf.build/gen/go/bufbuild/reflect/protocolbuffers/go v1.36.1-20240117202343-bf8f65e8876c.1
 	connectrpc.com/connect v1.17.0
-	google.golang.org/protobuf v1.35.1
+	google.golang.org/protobuf v1.36.1
 )
 
 require (
