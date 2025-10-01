@@ -1,6 +1,6 @@
 module github.com/vic3lord/bufile/build
 
-go 1.24
+go 1.25
 
 require dagger.io/dagger v0.18.14
 
