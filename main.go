@@ -25,6 +25,7 @@ func run(ctx context.Context, cfg config.Config, w io.Writer) error {
 	opts := route.Options{
 		IncludeServiceName: cfg.IncludeServiceName,
 	}
+
 	for _, mod := range cfg.Modules {
 		err := route.Generate(ctx, mod, w, opts)
 		if err != nil {
@@ -33,7 +34,6 @@ func run(ctx context.Context, cfg config.Config, w io.Writer) error {
 		}
 	}
 	return errs
-
 }
 
 func main() {

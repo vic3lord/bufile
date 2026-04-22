@@ -13,6 +13,7 @@ import (
 
 const (
 	kubectlURL = "https://dl.k8s.io/release/v1.31.0/bin/linux/amd64/kubectl"
+	goVersion  = "1.25"
 )
 
 var task = flag.String("task", "", "task to run")
@@ -57,7 +58,7 @@ func Publish(ctx context.Context, dag *dagger.Client, ctr *dagger.Container) (st
 
 func Base(dag *dagger.Client) *dagger.Container {
 	return dag.Container().
-		From("golang:1.24").
+		From("golang:"+goVersion).
 		WithEnvVariable("CGO_ENABLED", "0").
 		WithMountedDirectory("/src", dag.Host().Directory(".")).
 		WithWorkdir("/src").
